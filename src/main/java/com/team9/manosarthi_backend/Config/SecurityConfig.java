@@ -69,6 +69,8 @@ public class SecurityConfig {
                         .requestMatchers("/subdistrict/**").permitAll()
                         .requestMatchers("/district/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
+                                    .requestMatchers("/admin/add").permitAll()
+                                   
 //                        .requestMatchers("/admin/**").permitAll()
 //                        .requestMatchers("/doctor/**").permitAll()
 
