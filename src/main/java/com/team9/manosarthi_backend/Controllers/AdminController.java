@@ -1,24 +1,30 @@
 package com.team9.manosarthi_backend.Controllers;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.team9.manosarthi_backend.Entities.Doctor;
 import com.team9.manosarthi_backend.Entities.Supervisor;
 import com.team9.manosarthi_backend.Entities.User;
+import com.team9.manosarthi_backend.Filters.DoctorFilter;
+import com.team9.manosarthi_backend.Filters.SupervisorFilter;
 import com.team9.manosarthi_backend.Services.AdminService;
 import com.team9.manosarthi_backend.Services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+//import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Validated
 @RestController
 @RequestMapping("/admin")
 @CrossOrigin(origins = "*")
-//@PreAuthorize("hasRole('USER')")
 //@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     @Autowired
@@ -49,71 +55,118 @@ public class AdminController {
     }
 
     //Doctor
+    @Validated
     @PostMapping("/doctor")
-    public Doctor addDoctor(@RequestBody Doctor doctor){
+    public ResponseEntity<MappingJacksonValue> addDoctor(@Valid @RequestBody Doctor doctor){
+
         System.out.println("doctor detauils"+doctor.toString());
         Doctor doc =  adminService.adddoctor(doctor);
-        return doc;
+
+        Set<String> doctorFilterProperties = new HashSet<>();
+        doctorFilterProperties.add("firstname");
+        doctorFilterProperties.add("lastname");
+        doctorFilterProperties.add("email");
+        doctorFilterProperties.add("subdistrictcode");
+
+        Set<String> subDistrictFilterProperties = new HashSet<>();
+        subDistrictFilterProperties.add("code");
+        subDistrictFilterProperties.add("name");
+        subDistrictFilterProperties.add("district");
+
+        DoctorFilter<Doctor> doctorFilter = new DoctorFilter<Doctor>(doc);
+
+
+
+
+        // Proceed with valid data
+        return ResponseEntity.ok(doctorFilter.getDoctorFilter(doctorFilterProperties,subDistrictFilterProperties));
     }
 
     @GetMapping("/doctor")
-    public List<Doctor> viewAllDoctors(@RequestParam("pagenumber") int pagenumber){  //(@PathVariable("districtcode") int districtcode,@PathVariable("subdistrictcode") int subdistrictcode)
-
+    public MappingJacksonValue viewAllDoctors(@RequestParam("pagenumber") int pagenumber){
         int pagesize = 5;
-        return adminService.viewAllDoctor(pagenumber,pagesize);
 
+        List<Doctor> doctors = adminService.viewAllDoctor(pagenumber,pagesize);
+
+        Set<String> doctorFilterProperties = new HashSet<>();
+        doctorFilterProperties.add("firstname");
+        doctorFilterProperties.add("lastname");
+        doctorFilterProperties.add("email");
+        doctorFilterProperties.add("subdistrictcode");
+
+        Set<String> subDistrictFilterProperties = new HashSet<>();
+        subDistrictFilterProperties.add("code");
+        subDistrictFilterProperties.add("name");
+        subDistrictFilterProperties.add("district");
+
+        DoctorFilter<List<Doctor>> doctorFilter = new DoctorFilter<List<Doctor>>(doctors);
+
+        return doctorFilter.getDoctorFilter(doctorFilterProperties,subDistrictFilterProperties);
     }
+
+
 
     @GetMapping("/doctor/district")
-    public List<Doctor> viewDoctorByDistrict(@RequestParam("districtcode") int districtcode,@RequestParam("pagenumber") int pagenumber){
+    public MappingJacksonValue viewDoctorByDistrict(@RequestParam("districtcode") int districtcode,@RequestParam("pagenumber") int pagenumber){
         int pagesize=5;
-//        System.out.println("/admin/doctor/dist District code "+districtcode);
-        return adminService.viewDoctorByDistrict(districtcode, pagenumber, pagesize);
+        List<Doctor> doctors= adminService.viewDoctorByDistrict(districtcode, pagenumber, pagesize);
+
+        Set<String> doctorFilterProperties = new HashSet<>();
+        doctorFilterProperties.add("firstname");
+        doctorFilterProperties.add("lastname");
+        doctorFilterProperties.add("email");
+        doctorFilterProperties.add("subdistrictcode");
+
+        Set<String> subDistrictFilterProperties = new HashSet<>();
+        subDistrictFilterProperties.add("code");
+        subDistrictFilterProperties.add("name");
+        subDistrictFilterProperties.add("district");
+
+        DoctorFilter<List<Doctor>> doctorFilter = new DoctorFilter<List<Doctor>>(doctors);
+        return doctorFilter.getDoctorFilter(doctorFilterProperties,subDistrictFilterProperties);
+
     }
 
-//    @GetMapping("/doctor/subdistrict/{subdistrictcode}")
-//    public List<Doctor> viewDoctorBySubDistrict(@PathVariable("subdistrictcode") int subdistrictcode){
-//        return adminService.viewDoctorBySubDistrict(subdistrictcode);
-//    }
-@GetMapping("/doctor/subdistrict/")
-public List<Doctor> viewDoctorBySubDistrict(@RequestParam("subdistrictcode") int subdistrictcode){
-    return adminService.viewDoctorBySubDistrict(subdistrictcode);
-}
+    @GetMapping("/doctor/subdistrict/")
+    public MappingJacksonValue viewDoctorBySubDistrict(@RequestParam("subdistrictcode") int subdistrictcode){
+        List<Doctor> doctors = adminService.viewDoctorBySubDistrict(subdistrictcode);
 
+        Set<String> doctorFilterProperties = new HashSet<>();
+        doctorFilterProperties.add("firstname");
+        doctorFilterProperties.add("lastname");
+        doctorFilterProperties.add("email");
+        doctorFilterProperties.add("subdistrictcode");
 
+        Set<String> subDistrictFilterProperties = new HashSet<>();
+        subDistrictFilterProperties.add("code");
+        subDistrictFilterProperties.add("name");
+        subDistrictFilterProperties.add("district");
 
+        DoctorFilter<List<Doctor>> doctorFilter = new DoctorFilter<List<Doctor>>(doctors);
+        return doctorFilter.getDoctorFilter(doctorFilterProperties,subDistrictFilterProperties);
+    }
 
     @PostMapping("/supervisor")
-    public Supervisor addSupervisor(@RequestBody Supervisor supervisor){
+    public MappingJacksonValue addSupervisor(@RequestBody Supervisor supervisor){
         Supervisor sup =  adminService.addSupervisor(supervisor);
-        return sup;
+
+        Set<String> supervisorFilterProperties = new HashSet<>();
+        supervisorFilterProperties.add("firstname");
+        supervisorFilterProperties.add("lastname");
+        supervisorFilterProperties.add("email");
+        supervisorFilterProperties.add("subdistrictcode");
+
+
+
+        Set<String> subDistrictFilterProperties = new HashSet<>();
+        subDistrictFilterProperties.add("code");
+        subDistrictFilterProperties.add("name");
+        subDistrictFilterProperties.add("district");
+
+        SupervisorFilter<Supervisor> supervisorFilter = new SupervisorFilter<>(sup);
+
+        return supervisorFilter.getSupervisorrFilter(supervisorFilterProperties,subDistrictFilterProperties);
     }
-
-//    public String addDoctor(@RequestBody Doctor doctor){
-//        String userId =  adminService.adddoctor(doctor);
-//        return " Doctor userId :  " + userId;
-//    }
-
-//    If want to view all doctors
-//    @GetMapping("/viewdoctor/{pageNumber}")
-//    public MappingJacksonValue viewDoctor(@PathVariable ("pageNumber") int pageNumber){
-////        System.out.println("hello");
-//        int pageSize=5;
-////        System.out.println(adminService.viewDocrtor());
-//        List<Doctor> doctors=adminService.viewAllDoctor();
-//
-//        SimpleBeanPropertyFilter filter= SimpleBeanPropertyFilter.filterOutAllExcept("firstname");
-//        FilterProvider filterProvider=new SimpleFilterProvider().addFilter("Doctor",filter);
-//        MappingJacksonValue mappingJacksonValue= new MappingJacksonValue(doctors);
-//
-//        System.out.println("doctor maping filter"+mappingJacksonValue.getFilters());
-//        System.out.println("filter"+ filterProvider.toString());
-////        mappingJacksonValue.setValue(filterProvider);
-//        mappingJacksonValue.setFilters(filterProvider);
-//        return mappingJacksonValue;
-//
-////        return adminService.viewDoctor(pageNumber,pageSize);
-//    }
 
 
 }

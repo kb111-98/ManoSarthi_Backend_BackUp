@@ -1,5 +1,6 @@
 package com.team9.manosarthi_backend.Entities;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonFilter("VillageJSONFilter")
 public class Village {
 
     @Id
@@ -25,4 +27,6 @@ public class Village {
     @JoinColumn(name = "subdistrictcode")
     private SubDistrict subDistrict;
 
+    @Column(name = "worker_count")
+    private int worker_count=0;
 }

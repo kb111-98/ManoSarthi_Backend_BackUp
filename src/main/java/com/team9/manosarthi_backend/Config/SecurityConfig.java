@@ -64,22 +64,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                       .requestMatchers("/passwordstatus/**").permitAll()
+//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/passwordstatus/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/subdistrict/**").permitAll()
                         .requestMatchers("/district/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
-                                    // .requestMatchers("/admin/add").permitAll()
-                                   
-//                        .requestMatchers("/admin/**").permitAll()
+//                        .requestMatchers("/admin/add").permitAll()
 //                        .requestMatchers("/doctor/**").permitAll()
 
-//                        .requestMatchers("/admin/**").hasRole("USER")
-                        // .requestMatchers("/admin/**").hasRole("ADMIN")
-                       .requestMatchers("/admin/**").permitAll()
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(("/admin/**")).permitAll()
 
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
                         .requestMatchers("/supervisor/**").hasRole("SUPERVISOR")
+                        .requestMatchers("/worker/**").hasRole("WORKER")
 //                        .requestMatchers("/doctor/**").hasRole("DOCTOR")
 //                        .requestMatchers("/user/**").hasRole("USER")
 
